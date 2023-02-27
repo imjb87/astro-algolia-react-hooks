@@ -1,0 +1,19 @@
+---
+import Search from '../components/Search.jsx';
+let title = 'My Astro Site';
+---
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{title}</title>
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        
+</head>
+<body>
+    <main class="max-w-4xl mx-auto py-16">
+        <Search client:load />
+    </main>
+</body>
+</html>
