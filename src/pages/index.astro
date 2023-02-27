@@ -1,6 +1,6 @@
 ---
 import Search from '../components/Search.jsx';
-let title = 'My Astro Site';
+let title = 'Example Algolia Search with React Hooks &amp; Astro';
 ---
 <html lang="en">
 <head>
@@ -12,8 +12,8 @@ let title = 'My Astro Site';
         
 </head>
 <body>
-    <main class="max-w-4xl mx-auto py-16">
-        <Search client:load />
+    <main class="max-w-4xl mx-auto py-16 px-6 sm:px-8">
+        <Search client:only="react" />
     </main>
 </body>
 </html>

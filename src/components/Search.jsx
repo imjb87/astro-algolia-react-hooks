@@ -5,6 +5,8 @@ import {
   useSearchBox,
   useRefinementList,
   useHits,
+  Highlight,
+  Snippet,
 } from 'react-instantsearch-hooks-web';
 
 const searchClient = algoliasearch(
@@ -40,7 +42,7 @@ function CustomRefinementList(props) {
   const { items, refine } = useRefinementList(props);
 
   return (
-    <div className="flex gap-x-3 flex-wrap py-5">
+    <div className="flex gap-x-4 gap-y-2 flex-wrap py-5">
       {items.map((item) => (
         <span
           className={`inline-flex items-center rounded-full ${
@@ -65,6 +67,53 @@ function CustomHits(props) {
       {hits.map((hit) => CustomHit(hit))}
     </div>
   ) : (
+    <NoHits />
+  );
+}
+
+function CustomHit(props) {
+  const {
+    tag_list,
+    featured_image,
+    meta: { description },
+  } = props;
+
+  return (
+    <article className="flex flex-col items-start">
+      <a className="group" href="#">
+        <div className="relative w-full">
+          <img
+            src={featured_image.filename}
+            alt=""
+            className="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2] group-hover:opacity-75 transition duration-300"
+          />
+          <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10"></div>
+        </div>
+        <div className="max-w-xl">
+          <div className="mt-8 flex items-center gap-x-4 gap-y-2 text-xs flex-wrap">
+            {tag_list.map((tag) => (
+              <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 whitespace-nowrap">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <div className="relative">
+            <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600 transition duration-300">
+              <span className="absolute inset-0"></span>
+              <Highlight attribute="name" hit={props} />
+            </h3>
+            <p className="mt-5 text-sm leading-6 text-gray-600 line-clamp-3">
+              <Highlight attribute="meta.description" hit={props} />
+            </p>
+          </div>
+        </div>
+      </a>
+    </article>
+  );
+}
+
+function NoHits() {
+  return (
     <div className="text-center">
       <svg
         class="mx-auto h-12 w-12 text-gray-400"
@@ -76,48 +125,6 @@ function CustomHits(props) {
       <h3 class="mt-2 text-sm font-semibold text-gray-900">No results</h3>
       <p class="mt-1 text-sm text-gray-500">Try a different search!</p>
     </div>
-  );
-}
-
-function CustomHit(props) {
-  const {
-    name,
-    tag_list,
-    featured_image,
-    meta: { description },
-  } = props;
-
-  return (
-    <article className="flex flex-col items-start">
-      <div className="relative w-full">
-        <img
-          src={featured_image.filename}
-          alt=""
-          className="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
-        />
-        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10"></div>
-      </div>
-      <div className="max-w-xl">
-        <div className="mt-8 flex items-center gap-x-4 gap-y-2 text-xs flex-wrap">
-          {tag_list.map((tag) => (
-            <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 whitespace-nowrap">
-              {tag}
-            </span>
-          ))}
-        </div>
-        <div className="group relative">
-          <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-            <a href="#">
-              <span className="absolute inset-0"></span>
-              {name}
-            </a>
-          </h3>
-          <p className="mt-5 text-sm leading-6 text-gray-600 line-clamp-3">
-            {description}
-          </p>
-        </div>
-      </div>
-    </article>
   );
 }
 
