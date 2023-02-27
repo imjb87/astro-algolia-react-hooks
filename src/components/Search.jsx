@@ -6,7 +6,6 @@ import {
   useRefinementList,
   useHits,
   Highlight,
-  Snippet,
 } from 'react-instantsearch-hooks-web';
 
 const searchClient = algoliasearch(
