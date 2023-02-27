@@ -23,7 +23,7 @@ function CustomSearchBox(props) {
         for="name"
         class="absolute -top-2 left-2 -mt-px inline-block bg-white px-1 text-xs font-medium text-gray-900"
       >
-        Example Algolia Search with React Hooks &amp; Astro
+        Example Algolia Search with React Hooks, Astro &amp; Tailwind
       </label>
       <input
         type="text"
