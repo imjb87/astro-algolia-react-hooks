@@ -5,6 +5,7 @@ import {
   useSearchBox,
   useRefinementList,
   useHits,
+  usePagination,
   Highlight,
 } from 'react-instantsearch-hooks-web';
 
@@ -41,7 +42,7 @@ function CustomRefinementList(props) {
   const { items, refine } = useRefinementList(props);
 
   return (
-    <div className="flex gap-x-4 gap-y-2 flex-wrap py-5">
+    <div className="flex gap-2 flex-wrap py-5">
       {items.map((item) => (
         <span
           className={`inline-flex items-center rounded-full ${
@@ -51,7 +52,7 @@ function CustomRefinementList(props) {
           } px-2.5 py-0.5 text-xs font-medium whitespace-nowrap cursor-pointer`}
           onClick={() => refine(item.value)}
         >
-          {item.label}
+          {item.label} ({item.count})
         </span>
       ))}
     </div>
@@ -72,6 +73,7 @@ function CustomHits(props) {
 
 function CustomHit(props) {
   const {
+    full_slug,
     tag_list,
     featured_image,
     meta: { description },
@@ -79,7 +81,11 @@ function CustomHit(props) {
 
   return (
     <article className="flex flex-col items-start">
-      <a className="group" href="#">
+      <a
+        className="group"
+        href={`https://escape-studios.netlify.app/${full_slug}`}
+        target="_blank"
+      >
         <div className="relative w-full">
           <img
             src={featured_image.filename}
@@ -89,7 +95,7 @@ function CustomHit(props) {
           <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10"></div>
         </div>
         <div className="max-w-xl">
-          <div className="mt-8 flex items-center gap-x-4 gap-y-2 text-xs flex-wrap">
+          <div className="mt-8 flex items-center gap-2 text-xs flex-wrap">
             {tag_list.map((tag) => (
               <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 whitespace-nowrap">
                 {tag}
@@ -127,12 +133,96 @@ function NoHits() {
   );
 }
 
+function CustomPagination(props) {
+  const {
+    pages,
+    currentRefinement,
+    nbHits,
+    nbPages,
+    isFirstPage,
+    isLastPage,
+    canRefine,
+    refine,
+    createURL,
+  } = usePagination(props);
+  return (
+    <div class="flex items-center justify-between border-t border-gray-200 bg-white py-3 mt-5">
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-center">
+        <div>
+          <nav
+            class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+            aria-label="Pagination"
+          >
+            <a
+              href="#"
+              class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+            >
+              <span class="sr-only">Previous</span>
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </a>
+            {pages.map((page) => (
+              <a
+                href="#"
+                onClick={(event) => {
+                  event.preventDefault();
+                  refine(page);
+                }}
+                class="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+              >
+                {page === currentRefinement ? (
+                  <strong>{page + 1}</strong>
+                ) : (
+                  page + 1
+                )}
+              </a>
+            ))}
+            <a
+              href="#"
+              class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+            >
+              <span class="sr-only">Next</span>
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Search() {
   return (
-    <InstantSearch searchClient={searchClient} indexName="Courses">
+    <InstantSearch
+      searchClient={searchClient}
+      indexName="Courses"
+      routing={true}
+    >
       <CustomSearchBox />
-      <CustomRefinementList attribute="tag_list" />
+      <CustomRefinementList attribute="tag_list" sortBy={['name']} />
       <CustomHits />
+      <CustomPagination />
     </InstantSearch>
   );
 }
